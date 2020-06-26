@@ -31,8 +31,9 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import io.mola.galimatias.URL;
-import io.mola.galimatias.GalimatiasParseException;
+import com.hp.hpl.jena.iri.IRI;
+import com.hp.hpl.jena.iri.IRIException;
+import com.hp.hpl.jena.iri.IRIFactory;
 
 public class DataUriEntityResolver implements EntityResolver {
 
@@ -52,6 +53,8 @@ public class DataUriEntityResolver implements EntityResolver {
 
     private boolean allowGenericXml = true;
 
+    private final IRIFactory iriFactory;
+
     private final ContentTypeParser contentTypeParser;
     
     /**
@@ -60,6 +63,9 @@ public class DataUriEntityResolver implements EntityResolver {
     public DataUriEntityResolver(EntityResolver delegate, boolean laxContentType,
             ErrorHandler errorHandler) {
         this.errorHandler = errorHandler;
+        this.iriFactory = new IRIFactory();
+        this.iriFactory.useSpecificationXMLSystemID(true);
+        this.iriFactory.useSchemeSpecificRules("data", true);
         this.contentTypeParser = new ContentTypeParser(errorHandler,
                 laxContentType, this.allowRnc, this.allowHtml, this.allowXhtml,
                 this.acceptAllKnownXmlTypes, this.allowGenericXml);
@@ -74,10 +80,10 @@ public class DataUriEntityResolver implements EntityResolver {
     public InputSource resolveEntity(String publicId, String systemId)
             throws SAXException, IOException {
         if (DataUri.startsWithData(systemId)) {
-            URL url;
+            IRI iri;
             try {
-                url = URL.parse(systemId);
-            } catch (GalimatiasParseException e) {
+                iri = iriFactory.construct(systemId);
+            } catch (IRIException e) {
                 IOException ioe = (IOException) new IOException(e.getMessage()).initCause(e);
                 SAXParseException spe = new SAXParseException(e.getMessage(),
                         publicId, systemId, -1, -1, ioe);
@@ -86,7 +92,7 @@ public class DataUriEntityResolver implements EntityResolver {
                 }
                 throw spe;
             }
-            systemId = url.toString();
+            systemId = iri.toASCIIString();
             DataUri du = new DataUri(systemId);
             TypedInputSource is = contentTypeParser.buildTypedInputSource(systemId, publicId,
                     du.getContentType());

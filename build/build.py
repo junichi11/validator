@@ -172,6 +172,7 @@ dependencyPackages = [
     ("https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-servlets/9.4.18.v20190429/jetty-servlets-9.4.18.v20190429.jar", "ed9e6c52ea1c28d92b81bf5c4cff5e22"),  # nopep8
     ("https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-util/9.4.18.v20190429/jetty-util-9.4.18.v20190429.jar", "0e98accd79ef0f0709e67b32d1882712"),  # nopep8
     ("https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-util-ajax/9.4.18.v20190429/jetty-util-ajax-9.4.18.v20190429.jar", "ec81b52cf2801e04c47e4be7fbeaa9d2"),  # nopep8
+    ("https://repo1.maven.org/maven2/com/hp/hpl/jena/iri/0.8/iri-0.8.jar", "475e01f6ed4c775114d2d2dfdfb9b354"),  # nopep8
 ]
 
 moduleDependencyPackages = [

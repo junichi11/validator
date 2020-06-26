@@ -237,7 +237,7 @@ public final class Language extends AbstractDatatype {
             checkPrivateUse(i, subtags);
             return;
         }
-        if (subtag.length() == 4 & isLowerCaseAlpha(subtag)) {
+        if (subtag.length() == 4 && isLowerCaseAlpha(subtag)) {
             if (!isScript(subtag)) {
                 throw newDatatypeException("Bad script subtag.");
             }

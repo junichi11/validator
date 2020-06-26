@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,7 +42,7 @@ public class LocalCacheEntityResolver implements EntityResolver {
     }
 
     public static InputStream getPresetsAsStream() {
-        return LOADER.getResourceAsStream("nu/validator/localentities/files/presets");
+        return LOADER.getResourceAsStream("nu/validator/localentities/presets");
     }
 
     public static InputStream getHtml5SpecAsStream() {
@@ -57,6 +58,11 @@ public class LocalCacheEntityResolver implements EntityResolver {
      */
     public LocalCacheEntityResolver(EntityResolver delegate) {
         this.delegate = delegate;
+    }
+
+    public static URL getResource(String systemId) {
+        String path = PATH_MAP.get(systemId);
+        return path != null ? LOADER.getResource(path) : null;
     }
 
     /**
@@ -92,6 +98,7 @@ public class LocalCacheEntityResolver implements EntityResolver {
                 return is;
             }
         }
+        System.out.println("resolve :" + publicId +" " + systemId);
         return delegate.resolveEntity(publicId, systemId);
     }
 

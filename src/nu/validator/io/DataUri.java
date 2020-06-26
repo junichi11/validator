@@ -22,13 +22,11 @@
 
 package nu.validator.io;
 
+import com.hp.hpl.jena.iri.IRIFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.net.MalformedURLException;
-
-import io.mola.galimatias.URL;
-import io.mola.galimatias.GalimatiasParseException;
 
 public class DataUri {
 
@@ -56,17 +54,17 @@ public class DataUri {
      * @throws MalformedURLException
      * @throws IOException
      */
-    protected void init(URL url) throws IOException, MalformedURLException {
-        if (!url.scheme().equals("data")) {
+    protected void init(com.hp.hpl.jena.iri.IRI url) throws IOException, MalformedURLException {
+        if (!url.getScheme().equals("data")) {
             throw new IllegalArgumentException("The input did not start with data:.");
         }
 
-        if (url.fragment() != null) {
+        if (url.getRawFragment()!= null) {
             throw new MalformedURLException(
                     "Fragment is not allowed for data: URIs according to RFC 2397.");
         }
 
-        is = new PercentDecodingReaderInputStream(new StringReader(url.schemeData()));
+        is = new PercentDecodingReaderInputStream(new StringReader(url.getRawPath()));
         StringBuilder sb = new StringBuilder();
         State state = State.AT_START;
         int i = 0; // string counter
@@ -256,11 +254,15 @@ public class DataUri {
     }
 
     public DataUri(String url) throws IOException {
-        try {
-            init(URL.parse(url));
-        } catch (GalimatiasParseException e) {
-            throw new MalformedURLException(e.getMessage());
-        }
+
+        IRIFactory fac = new IRIFactory();
+        fac.shouldViolation(true, false);
+        fac.securityViolation(true, false);
+        fac.dnsViolation(true, false);
+        fac.mintingViolation(false, false);
+        fac.useSpecificationIRI(true);
+        init(fac.construct(url));
+
     }
 
     /**
@@ -268,7 +270,7 @@ public class DataUri {
      * @throws MalformedURLException
      * @throws IOException
      */
-    public DataUri(URL url) throws IOException, MalformedURLException {
+    public DataUri(com.hp.hpl.jena.iri.IRI url) throws IOException, MalformedURLException {
         init(url);
     }
 
